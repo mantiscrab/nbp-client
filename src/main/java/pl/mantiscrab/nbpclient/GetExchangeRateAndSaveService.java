@@ -1,4 +1,4 @@
-package pl.mantiscrab.nbp;
+package pl.mantiscrab.nbpclient;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

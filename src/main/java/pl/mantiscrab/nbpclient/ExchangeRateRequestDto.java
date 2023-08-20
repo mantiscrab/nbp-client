@@ -1,7 +1,4 @@
-package pl.mantiscrab.nbp;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package pl.mantiscrab.nbpclient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

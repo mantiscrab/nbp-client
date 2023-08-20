@@ -1,4 +1,4 @@
-package pl.mantiscrab.nbp;
+package pl.mantiscrab.nbpclient;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

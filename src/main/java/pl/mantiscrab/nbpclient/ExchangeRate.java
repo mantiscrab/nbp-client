@@ -1,4 +1,4 @@
-package pl.mantiscrab.nbp;
+package pl.mantiscrab.nbpclient;
 
 import java.math.BigDecimal;
 

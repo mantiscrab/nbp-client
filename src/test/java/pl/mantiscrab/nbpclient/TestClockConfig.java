@@ -1,4 +1,4 @@
-package pl.mantiscrab.nbp;
+package pl.mantiscrab.nbpclient;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
