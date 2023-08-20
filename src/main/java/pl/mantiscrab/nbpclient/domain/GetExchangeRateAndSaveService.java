@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -21,7 +20,7 @@ public class GetExchangeRateAndSaveService {
         final Currency currency = Currency.of(currencyName);
         final ExchangeRate exchangeRate = exchangeRateClient.getExchangeRateFor(currency);
         final ExchangeRateRequest exchangeRateRequest
-                = new ExchangeRateRequest(UUID.randomUUID(), currency, fullName,
+                = new ExchangeRateRequest(currency, fullName,
                 LocalDateTime.now(clock), exchangeRate);
         requestRepository.save(exchangeRateRequest);
         return exchangeRate;
@@ -33,7 +32,7 @@ public class GetExchangeRateAndSaveService {
                         r.getCurrency().asString(),
                         r.getName(),
                         r.getRequestDate(),
-                        r.getExchangeRate().getValue()
+                        r.getExchangeRate().orElseThrow().getValue()
                 )).toList();
     }
 }
