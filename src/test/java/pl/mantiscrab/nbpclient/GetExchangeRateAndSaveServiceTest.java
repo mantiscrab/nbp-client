@@ -26,21 +26,28 @@ class GetExchangeRateAndSaveServiceTest {
     @MockBean
     ExchangeRateClient exchangeRateClient;
 
+    final Currency usd = Currency.of("USD");
+    final BigDecimal usdExchangeRateValue = new BigDecimal("4.4444");
+    final ExchangeRate usdExchangeRate = new ExchangeRate(usdExchangeRateValue);
+    final Currency sek = Currency.of("SEK");
+    final BigDecimal sekExchangeRateValue = new BigDecimal("0.3333");
+    final ExchangeRate sekExchangeRate = new ExchangeRate(sekExchangeRateValue);
+
     @Test
     void getSaveAndReturnExchangeRateRequests() {
         //given
-        given(exchangeRateClient.getExchangeRateFor(Currency.of("USD")))
-                .willReturn(new ExchangeRate(new BigDecimal("4.4444")));
-        given(exchangeRateClient.getExchangeRateFor(Currency.of("SEK")))
-                .willReturn(new ExchangeRate(new BigDecimal("0.3333")));
+        given(exchangeRateClient.getExchangeRateFor(usd))
+                .willReturn(usdExchangeRate);
+        given(exchangeRateClient.getExchangeRateFor(sek))
+                .willReturn(sekExchangeRate);
 
         //when
         final ExchangeRate exchangeRateMC = service.getExchangeRateFor("USD", "Mantis Crab");
         final ExchangeRate exchangeRateJS = service.getExchangeRateFor("SEK", "John Smith");
 
         //then
-        Assertions.assertEquals(new BigDecimal("4.4444"), exchangeRateMC.getValue());
-        Assertions.assertEquals(new BigDecimal("0.3333"), exchangeRateJS.getValue());
+        Assertions.assertEquals(usdExchangeRateValue, exchangeRateMC.getValue());
+        Assertions.assertEquals(sekExchangeRateValue, exchangeRateJS.getValue());
 
         //when
         final List<ExchangeRateRequestDto> requests = service.getAllExchangeRateRequests();
@@ -48,20 +55,22 @@ class GetExchangeRateAndSaveServiceTest {
         //then
         Assertions.assertEquals(2, requests.size());
 
-        final ExchangeRateRequestDto mantisCrab = requests.stream().filter(
-                        request -> request.getName().equals("Mantis Crab"))
-                .findFirst().orElseThrow();
+        final ExchangeRateRequestDto mantisCrab = getFirstExchangeRateBy("Mantis Crab", requests);
         Assertions.assertEquals("Mantis Crab", mantisCrab.getName());
         Assertions.assertEquals("USD", mantisCrab.getCurrency());
-        Assertions.assertEquals(new BigDecimal("4.4444"), mantisCrab.getValue());
+        Assertions.assertEquals(usdExchangeRateValue, mantisCrab.getValue());
         Assertions.assertEquals(LocalDateTime.now(clock).truncatedTo(ChronoUnit.MICROS), mantisCrab.getRequestDate());
 
-        final ExchangeRateRequestDto johnSmith = requests.stream().filter(
-                        request -> request.getName().equals("John Smith"))
-                .findFirst().orElseThrow();
+        final ExchangeRateRequestDto johnSmith = getFirstExchangeRateBy("John Smith", requests);
         Assertions.assertEquals("John Smith", johnSmith.getName());
         Assertions.assertEquals("SEK", johnSmith.getCurrency());
-        Assertions.assertEquals(new BigDecimal("0.3333"), johnSmith.getValue());
+        Assertions.assertEquals(sekExchangeRateValue, johnSmith.getValue());
         Assertions.assertEquals(LocalDateTime.now(clock).truncatedTo(ChronoUnit.MICROS), johnSmith.getRequestDate());
+    }
+
+    private static ExchangeRateRequestDto getFirstExchangeRateBy(final String name, final List<ExchangeRateRequestDto> requests) {
+        return requests.stream().filter(
+                        request -> request.getName().equals(name))
+                .findFirst().orElseThrow();
     }
 }
